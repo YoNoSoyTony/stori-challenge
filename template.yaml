@@ -3,7 +3,30 @@ Transform: AWS::Serverless-2016-10-31
 Description: Stori Challenge Application
 
 Resources:
-  StoriChallengeBucket:
-    Type: AWS::S3::Bucket
+  CsvUploaderFunction:
+    Type: AWS::Serverless::Function
     Properties:
-      BucketName: stori-challenge
+      FunctionName: CsvUploader
+      Handler: main
+      Runtime: provided.al2023  
+      CodeUri: backend/handle-csv/ 
+      Events:
+        ApiGatewayEvent:
+          Type: Api
+          Properties:
+            Path: /upload-csv
+            Method: post
+
+  EmailSenderFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: EmailSender
+      Handler: main  
+      Runtime: provided.al2023  
+      CodeUri: backend/send-email/  
+      Events:
+        ApiGatewayEvent:
+          Type: Api
+          Properties:
+            Path: /send-email
+            Method: post
