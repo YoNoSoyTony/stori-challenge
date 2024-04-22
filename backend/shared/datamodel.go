@@ -7,6 +7,43 @@ import (
 	"time"
 )
 
+func CalculateMetrics(transactions []Transaction) (Metrics, error) {
+	var metrics Metrics
+	var totalPositive, totalNegative, totalTransactions int
+	monthCounts := make(map[string]int)
+
+	for _, transaction := range transactions {
+		totalTransactions++
+		if transaction.Amount > 0 {
+			totalPositive += transaction.Amount
+		} else {
+			totalNegative += transaction.Amount
+		}
+		monthCounts[transaction.Month]++
+	}
+
+	metrics.Balance = totalPositive - totalNegative
+	if totalPositive > 0 {
+		metrics.PositiveAverage = totalPositive / totalTransactions
+	}
+	if totalNegative < 0 {
+		metrics.NegativeAverage = totalNegative / totalTransactions
+	}
+	metrics.TransactionsByMonth = monthCounts
+	metrics.Transactions = transactions
+
+	return metrics, nil
+}
+
+// Metrics represents the calculated metrics for transactions.
+type Metrics struct {
+	Balance             int            `json:"balance"`
+	PositiveAverage     int            `json:"positiveAverage"`
+	NegativeAverage     int            `json:"negativeAverage"`
+	TransactionsByMonth map[string]int `json:"transactionsByMonth"`
+	Transactions        []Transaction  `json:"transactions"`
+}
+
 type Transaction struct {
 	Email         string `json:"email"`
 	Amount        int    `json:"amount"`

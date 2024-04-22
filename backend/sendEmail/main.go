@@ -28,12 +28,17 @@ func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		return events.APIGatewayProxyResponse{StatusCode: 500, Body: err.Error()}, nil
 	}
 
-	jsonTransactions, err := json.Marshal(transactions)
+	metrics, err := shared.CalculateMetrics(transactions)
 	if err != nil {
 		return events.APIGatewayProxyResponse{StatusCode: 500, Body: err.Error()}, nil
 	}
 
-	return events.APIGatewayProxyResponse{StatusCode: 200, Body: string(jsonTransactions)}, nil
+	jsonMetrics, err := json.Marshal(metrics)
+	if err != nil {
+		return events.APIGatewayProxyResponse{StatusCode: 500, Body: err.Error()}, nil
+	}
+
+	return events.APIGatewayProxyResponse{StatusCode: 200, Body: string(jsonMetrics)}, nil
 }
 
 func main() {
