@@ -10,25 +10,25 @@ import (
 )
 
 func HandleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	var transaction shared.Transaction
-	err := json.Unmarshal([]byte(request.Body), &transaction)
+	var payload struct {
+		Transactions []shared.Transaction `json:"transactions"`
+	}
+	err := json.Unmarshal([]byte(request.Body), &payload)
 	if err != nil {
 		return events.APIGatewayProxyResponse{StatusCode: 400, Body: err.Error()}, nil
 	}
-
-	transaction.GenerateTransactionID()
 
 	svc, err := shared.NewDynamoDBClient()
 	if err != nil {
 		return events.APIGatewayProxyResponse{StatusCode: 500, Body: err.Error()}, nil
 	}
 
-	err = shared.PutTransaction(svc, transaction)
+	err = shared.PutTransactions(svc, payload.Transactions)
 	if err != nil {
 		return events.APIGatewayProxyResponse{StatusCode: 500, Body: err.Error()}, nil
 	}
 
-	return events.APIGatewayProxyResponse{StatusCode: 200, Body: "Transaction created successfully"}, nil
+	return events.APIGatewayProxyResponse{StatusCode: 200, Body: "Transactions created successfully"}, nil
 }
 
 func main() {
