@@ -21,11 +21,10 @@ const GetMetricsStep = () => {
           },
         }
       );
-      if(response.data.transactions.length === 0) {
+      if (response.data.transactions.length === 0) {
         toast.error("No transactions found for this email.");
         return;
-      }
-      else {
+      } else {
         setResponse(response.data);
       }
     } catch (error) {
@@ -63,7 +62,6 @@ const GetMetricsStep = () => {
           <div className="flex flex-col items-start justify-start">
             <table className="w-full">
               {" "}
-              {/* Apply w-full to make the table full width */}
               <thead>
                 <tr>
                   <th>Metric</th>
@@ -98,8 +96,6 @@ const GetMetricsStep = () => {
         <div className="flex flex-col items-start justify-start mt-4 mb-4 w-full">
           <h2 className="text-xl font-bold">Monthly Statements</h2>
           <table className="w-full">
-            {" "}
-            {/* Apply w-full to make the table full width */}
             <thead>
               <tr>
                 <th>Month</th>
@@ -107,14 +103,33 @@ const GetMetricsStep = () => {
               </tr>
             </thead>
             <tbody>
-              {Object.entries(response.transactionsByMonth).map(
-                ([month, transactions]) => (
+              {Object.entries(response.transactionsByMonth)
+                .sort(([monthA], [monthB]) => {
+                  const monthOrder = {
+                    January: 1,
+                    February: 2,
+                    March: 3,
+                    April: 4,
+                    May: 5,
+                    June: 6,
+                    July: 7,
+                    August: 8,
+                    September: 9,
+                    October: 10,
+                    November: 11,
+                    December: 12,
+                  };
+                  return (
+                    monthOrder[monthA as keyof typeof monthOrder] -
+                    monthOrder[monthB as keyof typeof monthOrder]
+                  );
+                })
+                .map(([month, transactions]) => (
                   <tr key={month} className="border-b border-gray-300">
                     <td className="text-base">{month}</td>
                     <td className="text-right">{String(transactions)}</td>
                   </tr>
-                )
-              )}
+                ))}
             </tbody>
           </table>
         </div>
