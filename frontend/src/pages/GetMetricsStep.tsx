@@ -43,7 +43,7 @@ const GetMetricsStep = () => {
           <TextField
             required
             label="Email"
-            variant="outlined"
+            variant="standard"
             value={email}
             onChange={(e) => setEmail(e.target.value.trim())}
             className="w-full py-2 m-4"

@@ -9,7 +9,7 @@ import (
 
 func CalculateMetrics(transactions []Transaction) (Metrics, error) {
 	var metrics Metrics
-	var totalPositive, totalNegative, totalTransactions int
+	var totalPositive, totalNegative, totalTransactions float64
 	monthCounts := make(map[string]int)
 
 	for _, transaction := range transactions {
@@ -37,23 +37,23 @@ func CalculateMetrics(transactions []Transaction) (Metrics, error) {
 
 // Metrics represents the calculated metrics for transactions.
 type Metrics struct {
-	Balance             int            `json:"balance"`
-	PositiveAverage     int            `json:"positiveAverage"`
-	NegativeAverage     int            `json:"negativeAverage"`
+	Balance             float64        `json:"balance"`
+	PositiveAverage     float64        `json:"positiveAverage"`
+	NegativeAverage     float64        `json:"negativeAverage"`
 	TransactionsByMonth map[string]int `json:"transactionsByMonth"`
 	Transactions        []Transaction  `json:"transactions"`
 }
 
 type Transaction struct {
-	Email         string `json:"email"`
-	Amount        int    `json:"amount"`
-	Month         string `json:"month"`
-	TransactionID string `json:"transactionId"`
+	Email         string  `json:"email"`
+	Amount        float64 `json:"amount"`
+	Month         string  `json:"month"`
+	TransactionID string  `json:"transactionId"`
 }
 
 func (t *Transaction) GenerateTransactionID() {
 	timestamp := time.Now().UnixNano()
-	data := fmt.Sprintf("%s-%d-%s-%d", t.Email, t.Amount, t.Month, timestamp)
+	data := fmt.Sprintf("%s-%f-%s-%d", t.Email, t.Amount, t.Month, timestamp)
 	hash := sha256.Sum256([]byte(data))
 	t.TransactionID = hex.EncodeToString(hash[:])
 }
