@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import Papa from "papaparse";
 import { toast } from "react-toastify";
@@ -10,10 +10,21 @@ interface Transaction {
   Date: string;
   Transaction: string;
 }
-
+const submitTransactions = (transactions: any[]) => {
+  axios.post('https://cld7djirp5.execute-api.us-east-1.amazonaws.com/default/handleCSV', {transactions: transactions})
+     .then(response => {
+       console.log(response);
+       transactions.length !== 0 && toast.success("Data processed successfully.");
+     })
+     .catch(error => {
+       console.error(error);
+       console.log(transactions);
+       transactions.length !== 0 && toast.error("Error processing data.");
+     });
+ };
+ 
 const HandleFileStep: React.FC = () => {
   const [email, setEmail] = useState<string>("");
-  const [transactions, setTransactions] = useState<any[]>([]); 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -70,16 +81,7 @@ const HandleFileStep: React.FC = () => {
             amount: parseFloat(transaction.Transaction), 
             month: convertDateToMonthName([transaction])[0].Date.split('/')[0] 
           }));
-          setTransactions(processedTransactions);
-          axios.post('https://cld7djirp5.execute-api.us-east-1.amazonaws.com/default/handleCSV', {transactions: transactions})
-            .then(response => {
-              console.log(response);
-              toast.success("Data processed successfully.");
-            })
-            .catch(error => {
-              console.error(error);
-              toast.error("Error processing data.");
-            });
+          submitTransactions(processedTransactions);
         }
       },
       error: (err: any): void => {
@@ -94,6 +96,11 @@ const HandleFileStep: React.FC = () => {
   };
 
   const fileName = selectedFile ? selectedFile.name : "";
+
+  useEffect(() => {
+    submitTransactions([]);
+  }
+  ,[]);
 
   return (
     <div className="flex flex-col items-center justify-center bg-white text-black rounded-xl p-6 shadow-lg w-full md:w-1/3">

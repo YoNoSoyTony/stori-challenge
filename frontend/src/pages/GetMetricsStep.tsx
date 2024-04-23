@@ -61,7 +61,6 @@ const GetMetricsStep = () => {
           <h2 className="text-xl font-bold">Metrics</h2>
           <div className="flex flex-col items-start justify-start">
             <table className="w-full">
-              {" "}
               <thead>
                 <tr>
                   <th>Metric</th>
@@ -78,13 +77,13 @@ const GetMetricsStep = () => {
                 {response.positiveAverage !== undefined && (
                   <tr className="border-b border-gray-300">
                     <td className="text-base">Positive Average</td>
-                    <td className="text-right">{response.positiveAverage}</td>
+                    <td className="text-right">{parseFloat(response.positiveAverage).toFixed(2)}</td>
                   </tr>
                 )}
                 {response.negativeAverage !== undefined && (
                   <tr className="border-b border-gray-300">
                     <td className="text-base">Negative Average</td>
-                    <td className="text-right">{response.negativeAverage}</td>
+                    <td className="text-right">{parseFloat(response.negativeAverage).toFixed(2)}</td>
                   </tr>
                 )}
               </tbody>
